@@ -8,6 +8,10 @@ Make multilingual application using CodeIgniter.
 
 Explanations to use this CodeIgniter skeleton.
 
+### Define languages allowed
+
+In the hook there are two class variable "$languages" and "$current_language". The first one is an array whose elements are the languages allowed in your application. The second one is the default language of your application (if user language is not defined in "$language", this language will be the one displayed).
+
 ### Define routes
 
 Routes management is delegated to a language file. Like in i18n routines, urls are defined as a keyword. In this installation, the keyword, placed in an array of a language file (this array must be named $lang['route']) is an array where key is the uri and value the ruri, exactly like in route.php config file. Here's an example :
