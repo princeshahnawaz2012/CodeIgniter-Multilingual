@@ -10,13 +10,36 @@ Explanations to use this CodeIgniter skeleton.
 
 ### Define routes
 
-Routes management is delegated to a language file. Like in i18n routines, urls are defined as a keyword. In this installation, the keyword is an array where key is the uri and value the ruri, exactly like in route.php config file. Here's an example :
+Routes management is delegated to a language file. Like in i18n routines, urls are defined as a keyword. In this installation, the keyword, placed in an array of a language file (this array must be named $lang['route']) is an array where key is the uri and value the ruri, exactly like in route.php config file. Here's an example :
 
 	$lang['route']['member'] = array( 'member/(:any)' => "welcome/member/$1" );
 
 ### Multilingual Helper
 
 There is a helper file to help you to make translating sentences and urls more easily.
+
+#### Translate method
+
+In this helper there is a method : "_t($str, $params, $segment = '%s')" which allows you to translate sentences more easily. Here's an example :
+
+In a language file, there will be :
+
+	$lang['mezcalito'] = "%s is a web agency, located in %";
+
+In a view file, there will be :
+
+	echo _t($this->lang->line('mezcalito'), array('Mezcalito', 'Grenoble, France'));
+	
+This will render : "Mezcalito is a web agency, located in Grenoble, France".
+(The method replace "%s" (or a surcharged segment) by a $params line, in order shown in the array)
+
+#### Path helper
+
+There is an another method : "_path($str, $params = FALSE)". Thanks to it you can make urls more easily, using keywords of route_lang.php language file. Here's an example (using the route defined above) :
+
+	echo _path('member', array('yannis'));
+
+This will render : "member/yannis" (reference to the rule mentioned above).
 
 --------------------------------------------------
 
