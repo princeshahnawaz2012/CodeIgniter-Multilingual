@@ -10,7 +10,9 @@ Explanations to use this CodeIgniter skeleton.
 
 ### Define routes
 
-Routes management is delegated to a language file.
+Routes management is delegated to a language file. Like in i18n routines, urls are defined as a keyword. In this installation, the keyword is an array where key is the uri and value the ruri, exactly like in route.php config file. Here's an example :
+
+	$lang['route']['member'] = array( 'member/(:any)' => "welcome/member/$1" );
 
 ### Multilingual Helper
 
