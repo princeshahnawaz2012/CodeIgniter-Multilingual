@@ -30,8 +30,8 @@
 /**
  * Multilingual
  *
- * Select the correct language
- * for the user.
+ * Hook for multilingual application
+ * with CodeIgniter.
  *
  * @access	public
  * @param	string
@@ -39,8 +39,17 @@
  */
  class Multilingual
  {
-
-	function get_language()
+	/**
+	 * Get Language
+	 *
+	 * Get current language,
+	 * using browser preferences.
+	 *
+	 * @access	private
+	 * @param	none
+	 * @return	string
+	 */
+	private function get_language()
 	{
 		$languages = array(
 			'fr' => 'french',
@@ -59,7 +68,19 @@
 		return $current_language;
 	}
 	
-	function set_route()
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Route URL
+	 *
+	 * Get routes URL in route_lang.php language file,
+	 * place them in the route.php config file.
+	 *
+	 * @access	public
+	 * @param	none
+	 * @return	void
+	 */
+	public function set_route()
 	{
 		global $_ROUTE;
 		$current_language = $this->get_language();
@@ -78,7 +99,19 @@
 		$_ROUTE = $route;
 	}
 	
-	function set_language()
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Language conf
+	 *
+	 * Put the correct language
+	 * in the config.php config file.
+	 *
+	 * @access	public
+	 * @param	none
+	 * @return	void
+	 */
+	public function set_language()
 	{
 		$current_language = $this->get_language();
 		

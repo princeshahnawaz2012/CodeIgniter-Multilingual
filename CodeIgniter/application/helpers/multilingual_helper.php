@@ -31,7 +31,7 @@
  * Traduction
  *
  * Add parameters in a string,
- * replace key characters.
+ * replace defined segment characters.
  *
  * @access	public
  * @param	string
@@ -50,10 +50,10 @@ function _t($str, $params, $segment = '%s')
 // ------------------------------------------------------------------------
 
 /**
- * Traduction
+ * Path URL
  *
- * Add parameters in a string,
- * replace key characters.
+ * Take URL keyword defined in route_lang.php language file,
+ * replace segments replace by params line.
  *
  * @access	public
  * @param	string
