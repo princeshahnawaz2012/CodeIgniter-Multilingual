@@ -53,7 +53,7 @@ How does this process work ?
 
 ### Only one hook
 
-There is only one hook (multilingual.php) to manage multilingual rules.
+There is only one hook class (named : "Multilingual") to manage multilingual rules.
 
 #### Getting correct language
 
