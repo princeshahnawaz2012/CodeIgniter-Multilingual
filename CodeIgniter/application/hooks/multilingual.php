@@ -33,12 +33,28 @@
  * Hook for multilingual application
  * with CodeIgniter.
  *
- * @access	public
- * @param	string
- * @return	string
  */
  class Multilingual
  {
+ 	var $languages = array(
+							'fr' => 'french',
+							'en' => 'english'
+						  );
+							 	
+ 	var $current_language = 'en';
+ 	
+ 	/**
+	 * Constructor - Sets Email Preferences
+	 *
+	 * The constructor can be passed an array of config values
+	 */
+	public function __construct()
+	{
+		$this->get_language();
+	}
+ 	
+	// ------------------------------------------------------------------------
+	
 	/**
 	 * Get Language
 	 *
@@ -47,25 +63,18 @@
 	 *
 	 * @access	private
 	 * @param	none
-	 * @return	string
+	 * @return	void
 	 */
 	private function get_language()
 	{
-		$languages = array(
-			'fr' => 'french',
-			'en' => 'english'
-		);
-	
-		$current_language = $languages['en'];
+		$this->current_language = $this->languages[$this->current_language];
 		
 		$browser_language = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 2);
 		
-		if(isset($languages[$browser_language]) !== FALSE)
+		if(isset($this->languages[$browser_language]) !== FALSE)
 		{
-			$current_language = $languages[$browser_language];
+			$this->current_language = $this->languages[$browser_language];
 		}
-		
-		return $current_language;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -83,9 +92,8 @@
 	public function set_route()
 	{
 		global $_ROUTE;
-		$current_language = $this->get_language();
 		
-		require_once APPPATH.'language/'.$current_language.'/route_lang.php';
+		require_once APPPATH.'language/'.$this->current_language.'/route_lang.php';
 		
 		$route = array();
 		foreach($lang['route'] as $key => $array)
@@ -113,10 +121,8 @@
 	 */
 	public function set_language()
 	{
-		$current_language = $this->get_language();
-		
 		$this->config =& load_class('Config');
 		
-		$this->config->set_item('language', $current_language);
+		$this->config->set_item('language', $this->current_language);
 	}
 }
