@@ -75,9 +75,12 @@ function _path($str, $params = FALSE)
 			$res = $uri;
 		}
 		
-		foreach($params as $param)
+		if($params !== FALSE)
 		{
-			$res = preg_replace('#(\(?:any\)?|\(?:num\)?)#', $param, $res, 1);
+			foreach($params as $param)
+			{
+				$res = preg_replace('#(\(?:any\)?|\(?:num\)?)#', $param, $res, 1);
+			}
 		}
 	}
 	
