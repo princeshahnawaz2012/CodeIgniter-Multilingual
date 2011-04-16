@@ -16,7 +16,7 @@
 // ------------------------------------------------------------------------
 
 /**
- * CodeIgniter Traduction Helpers
+ * CodeIgniter Multilingual Helpers
  *
  * @package		CodeIgniter
  * @subpackage	Helpers
@@ -45,4 +45,41 @@ function _t($str, $params, $segment = '%s')
 	}
 
 	return $str;
+}
+
+// ------------------------------------------------------------------------
+
+/**
+ * Traduction
+ *
+ * Add parameters in a string,
+ * replace key characters.
+ *
+ * @access	public
+ * @param	string
+ * @return	string
+ */
+function _path($str, $params = FALSE)
+{
+	$res = $str;
+	
+	$CI =& get_instance();
+	$CI->lang->load('route');
+	
+	$route = $CI->lang->line('route');
+	
+	if(isset($route[$str]))
+	{
+		foreach($route[$str] as $uri => $ruri)
+		{
+			$res = $uri;
+		}
+		
+		foreach($params as $param)
+		{
+			$res = preg_replace('#(\(?:any\)?|\(?:num\)?)#', $param, $res, 1);
+		}
+	}
+	
+	return $res;
 }
