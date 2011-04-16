@@ -59,6 +59,25 @@
 		return $current_language;
 	}
 	
+	function set_route()
+	{
+		global $_ROUTE;
+		$current_language = $this->get_language();
+		
+		require_once APPPATH.'language/'.$current_language.'/route_lang.php';
+		
+		$route = array();
+		foreach($lang['route'] as $key => $array)
+		{
+			foreach($array as $uri => $ruri)
+			{
+				$route[$uri] = $ruri;
+			}
+		}
+		
+		$_ROUTE = $route;
+	}
+	
 	function set_language()
 	{
 		$current_language = $this->get_language();

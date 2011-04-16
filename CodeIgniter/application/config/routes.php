@@ -41,6 +41,11 @@
 $route['default_controller'] = "welcome";
 $route['404_override'] = '';
 
+global $_ROUTE;
+if(is_array($_ROUTE))
+{
+	$route = array_merge($route, $_ROUTE);
+}
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

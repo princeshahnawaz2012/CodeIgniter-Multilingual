@@ -10,6 +10,13 @@
 |
 */
 
+$hook['pre_system'] = array(
+	'class'		=> 'Multilingual',
+	'function'	=> 'set_route',
+	'filename'	=> 'multilingual.php',
+	'filepath'	=> 'hooks'
+);
+
 $hook['pre_controller'] = array(
 	'class'		=> 'Multilingual',
 	'function'	=> 'set_language',
