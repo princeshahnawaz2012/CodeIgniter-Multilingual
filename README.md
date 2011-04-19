@@ -28,7 +28,7 @@ In this helper there is a method : "_t($str, $params, $segment = '%s')" which al
 
 In a language file, there will be :
 
-	$lang['mezcalito'] = "%s is a web agency, located in %";
+	$lang['mezcalito'] = "%s is a web agency, located in %s";
 
 In a view file, there will be :
 
