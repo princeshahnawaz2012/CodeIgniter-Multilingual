@@ -39,12 +39,9 @@
  */
 function _t($str, $params, $segment = '%s')
 {
-	foreach($params as $param)
-	{
-		$str = preg_replace('#'.$segment.'#', $param, $str, 1);
-	}
-
-	return $str;
+	$str = str_replace($segment, '%s', $str);
+	
+	return vsprintf($str, $params);
 }
 
 // ------------------------------------------------------------------------
