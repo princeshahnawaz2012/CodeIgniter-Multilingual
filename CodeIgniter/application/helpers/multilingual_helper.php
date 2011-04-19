@@ -72,13 +72,13 @@ function _path($str, $params = FALSE)
 			$res = $uri;
 		}
 		
-		if($params !== FALSE)
-		{
-			foreach($params as $param)
-			{
-				$res = preg_replace('#(\(?:any\)?|\(?:num\)?)#', $param, $res, 1);
-			}
-		}
+		$res = str_replace('(', '', str_replace(')', '', $res));
+		$res = str_replace(':any', '%s', str_replace(':num', '%s', $res));
+	}
+	
+	if($params !== FALSE)
+	{
+		$res = vsprintf($res, $params);
 	}
 	
 	return $res;
