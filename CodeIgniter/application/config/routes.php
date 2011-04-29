@@ -41,7 +41,17 @@
 $route['default_controller'] = "welcome";
 $route['404_override'] = '';
 
+/*
+|--------------------------------------------------------------------------
+| GLOBAL ROUTES
+|--------------------------------------------------------------------------
+|
+| We have to use a global variable to define routes.
+| Write nothing in this file. To define routes, use the route language file.
+|
+*/
 global $_ROUTE;
+
 if(is_array($_ROUTE))
 {
 	$route = array_merge($route, $_ROUTE);

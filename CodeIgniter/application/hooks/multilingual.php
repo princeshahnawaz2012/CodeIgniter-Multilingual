@@ -16,13 +16,13 @@
 // ------------------------------------------------------------------------
 
 /**
- * CodeIgniter Change language Hooks
+ * CodeIgniter Multilingual Hooks
  *
  * @package		CodeIgniter
  * @subpackage	Hooks
  * @category	Hooks
  * @author		Yannis Sgarra
- * @link		https://github.com/lianis/CI-Multilingual
+ * @link		https://github.com/lianis/CodeIgniter-Multilingual
  */
 
 // ------------------------------------------------------------------------
@@ -36,20 +36,38 @@
  */
  class Multilingual
  {
- 	var $languages = array(
-							'fr' => 'french',
-							'en' => 'english'
-						  );
-							 	
- 	var $current_language = 'en';
+ 	/**
+ 	* @Array $languages
+ 	*/
+ 	private $languages = array();
  	
  	/**
-	 * Constructor - Sets Email Preferences
+ 	* @String $current_language
+ 	*/
+ 	private $current_language = "";
+ 	
+ 	/**
+ 	* @String $protocol
+ 	*/
+ 	private $protocol = 'BROWSER';
+ 		
+ 	// ------------------------------------------------------------------------
+ 	
+ 	/**
+	 * Constructor
 	 *
 	 * The constructor can be passed an array of config values
 	 */
 	public function __construct()
 	{
+		// Load the multilingual.php file.
+		require APPPATH.'config/multilingual.php';
+		
+		// Parse our class variables with the multilingual configuration items.
+		$this->languages = $config['multilingual']['allowed_languages'];
+		$this->current_language = $config['multilingual']['default_language'];
+		$this->protocol = $config['multilingual']['language_protocol'];
+		
 		$this->get_language();
 	}
  	
@@ -67,13 +85,23 @@
 	 */
 	private function get_language()
 	{
-		$this->current_language = $this->languages[$this->current_language];
-		
-		$browser_language = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"], 0, 2);
-		
-		if(isset($this->languages[$browser_language]) !== FALSE)
+		if($this->protocol === 'BROWSER')
 		{
-			$this->current_language = $this->languages[$browser_language];
+			// Find the language tag of the browser Accept-Language variable.
+			$browser_language = substr(strtolower($_SERVER["HTTP_ACCEPT_LANGUAGE"]), 0, 2);
+			
+			foreach($this->languages as $language)
+			{
+				// Make a language tag of a language defined in the multilingual configuration.
+				$key_language = substr(strtolower($language), 0, 2);
+				
+				// If the language tags correspond each other, defined the new current language.
+				if($key_language === $browser_language)
+				{
+					$this->current_language = $language;
+					break;
+				}
+			}
 		}
 	}
 	
@@ -91,10 +119,13 @@
 	 */
 	public function set_route()
 	{
+		// Defined global variable for the routes.
 		global $_ROUTE;
 		
-		require_once APPPATH.'language/'.$this->current_language.'/route_lang.php';
+		// Load route language file.
+		require APPPATH.'language/'.$this->current_language.'/route_lang.php';
 		
+		// Parse the $route variable, like in the route.php config file, with routes of language file.
 		$route = array();
 		foreach($lang['route'] as $key => $array)
 		{
@@ -104,6 +135,7 @@
 			}
 		}
 		
+		// Place the $route variable in the global variable defined before.
 		$_ROUTE = $route;
 	}
 	
@@ -123,6 +155,7 @@
 	{
 		$this->config =& load_class('Config');
 		
+		// Change the language of the configuration by the current language found with the hook.
 		$this->config->set_item('language', $this->current_language);
 	}
 }
