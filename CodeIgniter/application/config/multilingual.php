@@ -44,9 +44,26 @@ $config['multilingual']['default_language'] = 'english';
 | current language of the user.
 |
 | 'BROWSER'		Uses the BROWSER preferences (Accept-Language)
+| 'URI'			Uses the URI domain
 |
 */
-$config['multilingual']['language_protocol'] = 'BROWSER';
+$config['multilingual']['protocol'] = 'BROWSER';
+
+/*
+|--------------------------------------------------------------------------
+| URI
+|--------------------------------------------------------------------------
+|
+| If you select URI protocol, define the domains which correspond to
+| the different languages. e.g:
+|
+| $config['multilingual']['domains']['language'] = 'http://example.com/';
+|
+*/
+$config['multilingual']['domains'] = array();
+
+$config['multilingual']['domains']['english'] = 'http://en.ci-multilingue.labs.mezcalito.viki/';
+$config['multilingual']['domains']['french'] = 'http://fr.ci-multilingue.labs.mezcalito.viki/';
 
 /* End of file multilingual.php */
 /* Location: ./application/config/multilingual.php */

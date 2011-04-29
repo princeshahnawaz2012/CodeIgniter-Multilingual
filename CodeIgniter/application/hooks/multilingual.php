@@ -50,6 +50,11 @@
  	* @String $protocol
  	*/
  	private $protocol = 'BROWSER';
+ 	
+ 	/**
+ 	* @Array $domains
+ 	*/
+ 	private $domains = array();
  		
  	// ------------------------------------------------------------------------
  	
@@ -66,8 +71,10 @@
 		// Parse our class variables with the multilingual configuration items.
 		$this->languages = $config['multilingual']['allowed_languages'];
 		$this->current_language = $config['multilingual']['default_language'];
-		$this->protocol = $config['multilingual']['language_protocol'];
+		$this->protocol = $config['multilingual']['protocol'];
+		$this->domains = $config['multilingual']['domains'];
 		
+		// Find the correct language.
 		$this->get_language();
 	}
  	
@@ -100,6 +107,17 @@
 				{
 					$this->current_language = $language;
 					break;
+				}
+			}
+		}
+		elseif($this->protocol === 'URI')
+		{
+			foreach($this->domains as $k => $v)
+			{
+				// If domain defined and current url correspond each other, defined the new current language.
+				if(preg_match('#(http://)?'.$_SERVER['SERVER_NAME'].'/?#', $v))
+				{
+					$this->current_language = $k;
 				}
 			}
 		}
