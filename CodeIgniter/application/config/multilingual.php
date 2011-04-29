@@ -45,9 +45,11 @@ $config['multilingual']['default_language'] = 'english';
 |
 | 'BROWSER'		Uses the BROWSER preferences (Accept-Language)
 | 'URI'			Uses the URI domain
+| 'BOTH'		Uses the URI domain then BROWSER preferences 
+|				if domains don't correspond.
 |
 */
-$config['multilingual']['protocol'] = 'BROWSER';
+$config['multilingual']['protocol'] = 'BOTH';
 
 /*
 |--------------------------------------------------------------------------

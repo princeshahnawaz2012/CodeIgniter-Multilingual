@@ -75,7 +75,7 @@
 		$this->domains = $config['multilingual']['domains'];
 		
 		// Find the correct language.
-		$this->get_language();
+		$this->_get_language();
 	}
  	
 	// ------------------------------------------------------------------------
@@ -90,35 +90,57 @@
 	 * @param	none
 	 * @return	void
 	 */
-	private function get_language()
+	private function _get_language()
 	{
-		if($this->protocol === 'BROWSER')
+		if($this->protocol === 'URI' || $this->protocol === 'BOTH')
 		{
-			// Find the language tag of the browser Accept-Language variable.
-			$browser_language = substr(strtolower($_SERVER["HTTP_ACCEPT_LANGUAGE"]), 0, 2);
-			
-			foreach($this->languages as $language)
+			$this->_by_uri();
+		}
+		elseif($this->protocol === 'BROWSER')
+		{
+			$this->_by_browser();
+		}
+	}
+	
+	private function _by_uri()
+	{
+		$find_language = FALSE;
+		
+		foreach($this->domains as $k => $v)
+		{
+			// Sanitize url defined
+			$v = trim(str_replace('http://', '', $v), '/');
+		
+			// If domain defined and current url correspond each other, defined the new current language.
+			if($v === $_SERVER['SERVER_NAME'])
 			{
-				// Make a language tag of a language defined in the multilingual configuration.
-				$key_language = substr(strtolower($language), 0, 2);
-				
-				// If the language tags correspond each other, defined the new current language.
-				if($key_language === $browser_language)
-				{
-					$this->current_language = $language;
-					break;
-				}
+				$this->current_language = $k;
+				$find_language = TRUE;
 			}
 		}
-		elseif($this->protocol === 'URI')
+		
+		// If protocol is "BOTH" and "URI" one can't find a current language, it checks by browser.
+		if($this->protocol === 'BOTH' && $find_language === FALSE)
 		{
-			foreach($this->domains as $k => $v)
+			$this->_by_browser();
+		}
+	}
+	
+	private function _by_browser()
+	{
+		// Find the language tag of the browser Accept-Language variable.
+		$browser_language = substr(strtolower($_SERVER["HTTP_ACCEPT_LANGUAGE"]), 0, 2);
+		
+		foreach($this->languages as $language)
+		{
+			// Make a language tag of a language defined in the multilingual configuration.
+			$key_language = substr(strtolower($language), 0, 2);
+			
+			// If the language tags correspond each other, defined the new current language.
+			if($key_language === $browser_language)
 			{
-				// If domain defined and current url correspond each other, defined the new current language.
-				if(preg_match('#(http://)?'.$_SERVER['SERVER_NAME'].'/?#', $v))
-				{
-					$this->current_language = $k;
-				}
+				$this->current_language = $language;
+				break;
 			}
 		}
 	}
