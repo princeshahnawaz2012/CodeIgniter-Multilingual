@@ -1,6 +1,6 @@
 # CodeIgniter Multilingual
 
-Make multilingual application using CodeIgniter.
+Make multilingual application using CodeIgniter (v2.0.2).
 
 --------------------------------------------------
 
@@ -8,9 +8,22 @@ Make multilingual application using CodeIgniter.
 
 Explanations to use this CodeIgniter skeleton.
 
-### Define languages allowed
+### Configuration
 
-In the hook there are two class variable "$languages" and "$current_language". The first one is an array whose elements are the languages allowed in your application. The second one is the default language of your application (if user language is not defined in "$language", this language will be the one displayed).
+You just have to modify application/config/multilingual.php file. Don't touch the other files (hooks) !
+
+#### Define languages allowed
+
+In this file you have to define languages allowed in you application in the $config['multilingual']['allowed_languages'] variable.
+To add a language, add a line in the array variable like this following one :
+
+	array('language_name', 'language_tag', 'language_url')
+	
+Where "language_name" is the name (in lower cases) of language defined (it must be named like the folder language corresponding), and "language_tag" the tag (two letter word) of the language, it used by your browser to define language preferences (in your browser, it may be en_US ; just indicate en), and language_url the url where the language will be used (ie : en.example.com or www.example.com/en or www.example.com/index.php/en)
+	
+#### Define protocol used
+
+In the $config['multilingual']['protocols'] variable, you define the protocol used to find the correct language. There are two ones : 'BROWSER' and 'URI'. With 'URI', you use the defined urls (in config file) to find the language, whereas with 'BROWSER', you use browser preferences to find it. They are cumulative (for example, if you have en.example.com, fr.example.com and www.example.com and if you choose to cumulate the two rules, en.example.com will be in english, fr.example.com will be in french and for www.example.com, it will depend on user browser preferences).
 
 ### Define routes
 
@@ -57,7 +70,7 @@ There is only one hook class (named : "Multilingual") to manage multilingual rul
 
 #### Getting correct language
 
-In the hook file "multilingual.php", there is a method : "get_language" used to find the correct language. This method check the language defined in the browser preferences.
+In the hook file "multilingual.php", there is a method : "_get_language" used to find the correct language, using urls of the application or browser preferences.
 
 #### Language configuration
 
