@@ -21,6 +21,14 @@ $config['multilingual'] = array();
 | there is an available translation (language folder) if you intend to use
 | something other than english.
 |
+| Format
+| array($language_name, $language_tag, $language_url)
+|
+| $language_name : the name of language, used for translation folder (ie: english)
+| $language_tag : the tag of language, used by browser (like en_US : just en (two first letters))
+| $language_url : the url of language, as you want, like en.example.com or www.example.com/en
+|				  (or www.example.com/index.php/en if you don't remove the index.php from urls)
+|
 */
 $config['multilingual']['allowed_languages'] = array(
 														array('english', 'en', 'en.ci-multilingue.labs.mezcalito.viki/'),
