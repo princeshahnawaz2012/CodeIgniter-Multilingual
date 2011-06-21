@@ -42,19 +42,24 @@
  	private $languages = array();
  	
  	/**
- 	* @String $current_language
+ 	* @Array $current_language
  	*/
- 	private $current_language = "";
+ 	private $current_language = array();
  	
  	/**
- 	* @String $protocol
+ 	* @Array $protocols
  	*/
- 	private $protocol = 'BROWSER';
+ 	private $protocols = array('URI');
  	
  	/**
  	* @Array $domains
  	*/
  	private $domains = array();
+ 	
+ 	/**
+ 	* @String $used_protocol
+ 	*/
+ 	private $used_protocol = '';
  		
  	// ------------------------------------------------------------------------
  	
@@ -65,17 +70,16 @@
 	 */
 	public function __construct()
 	{
-		// Load the multilingual.php file.
+		// Load the multilingual.php config file.
 		require APPPATH.'config/multilingual.php';
 		
 		// Parse our class variables with the multilingual configuration items.
 		$this->languages = $config['multilingual']['allowed_languages'];
-		$this->current_language = $config['multilingual']['default_language'];
-		$this->protocol = $config['multilingual']['protocol'];
-		$this->domains = $config['multilingual']['domains'];
+		$this->current_language = $this->languages[0];
+		$this->protocols = $config['multilingual']['protocols'];
 		
 		// Find the correct language.
-		$this->_get_language();
+		$this->used_protocol = $this->_get_language();
 	}
  	
 	// ------------------------------------------------------------------------
@@ -88,61 +92,45 @@
 	 *
 	 * @access	private
 	 * @param	none
-	 * @return	void
+	 * @return	string
 	 */
 	private function _get_language()
 	{
-		if($this->protocol === 'URI' || $this->protocol === 'BOTH')
+		foreach($this->protocols as $protocol)
 		{
-			$this->_by_uri();
-		}
-		elseif($this->protocol === 'BROWSER')
-		{
-			$this->_by_browser();
-		}
-	}
-	
-	private function _by_uri()
-	{
-		$find_language = FALSE;
-		
-		foreach($this->domains as $k => $v)
-		{
-			// Sanitize url defined
-			$v = trim(str_replace('http://', '', $v), '/');
-		
-			// If domain defined and current url correspond each other, defined the new current language.
-			if($v === $_SERVER['SERVER_NAME'])
+			if($protocol === 'BROWSER')
 			{
-				$this->current_language = $k;
-				$find_language = TRUE;
+				// Find the language tag of the browser Accept-Language variable.
+				$browser_language = substr(strtolower($_SERVER["HTTP_ACCEPT_LANGUAGE"]), 0, 2);
+
+				foreach($this->languages as $language)
+				{
+					// If the language tags correspond each other, defined the new current language.
+					if($language[1] === $browser_language)
+					{
+						$this->current_language = $language;
+						return $protocol;
+					}
+				}
+			}
+			elseif($protocol === 'URI')
+			{
+				// Get the current uri
+				$current_uri = $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+				
+				foreach($this->languages as $language)
+				{
+					// Check if one of uris defined in the config file matches with the current_uri, to find the current language
+					if( preg_match('#'.trim(str_replace('http://', '', $language[2]), '/').'#', $current_uri) )
+					{
+						$this->current_language = $language;
+						return $protocol;
+					}
+				}
 			}
 		}
 		
-		// If protocol is "BOTH" and "URI" one can't find a current language, it checks by browser.
-		if($this->protocol === 'BOTH' && $find_language === FALSE)
-		{
-			$this->_by_browser();
-		}
-	}
-	
-	private function _by_browser()
-	{
-		// Find the language tag of the browser Accept-Language variable.
-		$browser_language = substr(strtolower($_SERVER["HTTP_ACCEPT_LANGUAGE"]), 0, 2);
-		
-		foreach($this->languages as $language)
-		{
-			// Make a language tag of a language defined in the multilingual configuration.
-			$key_language = substr(strtolower($language), 0, 2);
-			
-			// If the language tags correspond each other, defined the new current language.
-			if($key_language === $browser_language)
-			{
-				$this->current_language = $language;
-				break;
-			}
-		}
+		return 'no_protocol';
 	}
 	
 	// ------------------------------------------------------------------------
@@ -161,9 +149,25 @@
 	{
 		// Defined global variable for the routes.
 		global $_ROUTE;
+		global $_PRE_ROUTE;
+		
+		//If used protocol is URI and if language selection is made by a uri segment, put this segment in route configuration
+		$uri_pre = '';
+		if( $this->used_protocol === 'URI' )
+		{
+			$ext = str_replace('http://', '', $this->current_language[2]);
+			$ext = explode('/', $ext, 2);
+			if( isset($ext[1]) )
+			{
+				// Prepare prefix of URI for selected language using uri defined in config file
+				$uri_pre = trim( preg_replace('#((.+)\.php)?(.+)#', '$3', $ext[1]), '/' );
+				$_PRE_ROUTE = $uri_pre;
+				$uri_pre = $uri_pre . '/';
+			}
+		}
 		
 		// Load route language file.
-		require APPPATH.'language/'.$this->current_language.'/route_lang.php';
+		require APPPATH.'language/'.$this->current_language[0].'/route_lang.php';
 		
 		// Parse the $route variable, like in the route.php config file, with routes of language file.
 		$route = array();
@@ -171,7 +175,7 @@
 		{
 			foreach($array as $uri => $ruri)
 			{
-				$route[$uri] = $ruri;
+				$route[trim($uri_pre.$uri, '/')] = $ruri;
 			}
 		}
 		
@@ -196,6 +200,6 @@
 		$this->config =& load_class('Config');
 		
 		// Change the language of the configuration by the current language found with the hook.
-		$this->config->set_item('language', $this->current_language);
+		$this->config->set_item('language', $this->current_language[0]);
 	}
 }

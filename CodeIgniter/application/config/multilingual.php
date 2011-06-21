@@ -18,54 +18,29 @@ $config['multilingual'] = array();
 |--------------------------------------------------------------------------
 |
 | This determines which set of language files should be used. Make sure
-| there is an available translation if you intend to use something other
-| than english.
+| there is an available translation (language folder) if you intend to use
+| something other than english.
 |
 */
-$config['multilingual']['allowed_languages'] = array('english', 'french');
+$config['multilingual']['allowed_languages'] = array(
+														array('english', 'en', 'en.ci-multilingue.labs.mezcalito.viki/'),
+														array('french', 'fr', 'ci-multilingue.labs.mezcalito.viki/fr')
+													);
 
 /*
 |--------------------------------------------------------------------------
-| Default Language
-|--------------------------------------------------------------------------
-|
-| This determines which default language should be used if the user
-| one is not in the allowed ones.
-|
-*/
-$config['multilingual']['default_language'] = 'english';
-
-/*
-|--------------------------------------------------------------------------
-| Language Protocol
+| Language Protocols
 |--------------------------------------------------------------------------
 |
 | This item determines which technic should be used to retrieve the
-| current language of the user.
+| current language of the user. You can use one or more. Just put them
+| in the order that you want to be effective.
 |
 | 'BROWSER'		Uses the BROWSER preferences (Accept-Language)
 | 'URI'			Uses the URI domain
-| 'BOTH'		Uses the URI domain then BROWSER preferences 
-|				if domains don't correspond.
 |
 */
-$config['multilingual']['protocol'] = 'BOTH';
-
-/*
-|--------------------------------------------------------------------------
-| URI
-|--------------------------------------------------------------------------
-|
-| If you select URI protocol, define the domains which correspond to
-| the different languages. e.g:
-|
-| $config['multilingual']['domains']['language'] = 'http://example.com/';
-|
-*/
-$config['multilingual']['domains'] = array();
-
-$config['multilingual']['domains']['english'] = 'http://en.ci-multilingue.labs.mezcalito.viki/';
-$config['multilingual']['domains']['french'] = 'http://fr.ci-multilingue.labs.mezcalito.viki/';
+$config['multilingual']['protocols'] = array('URI', 'BROWSER');
 
 /* End of file multilingual.php */
 /* Location: ./application/config/multilingual.php */

@@ -60,6 +60,8 @@ function _path($str, $params = FALSE)
 {
 	$res = $str;
 	
+	global $_PRE_ROUTE;
+	
 	$CI =& get_instance();
 	$CI->lang->load('route');
 	
@@ -69,7 +71,7 @@ function _path($str, $params = FALSE)
 	{
 		foreach($route[$str] as $uri => $ruri)
 		{
-			$res = $uri;
+			$res = trim( $_PRE_ROUTE.'/'.$uri, '/' );
 		}
 		
 		$res = str_replace('(', '', str_replace(')', '', $res));
