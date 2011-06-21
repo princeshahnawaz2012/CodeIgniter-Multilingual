@@ -31,8 +31,8 @@ $config['multilingual'] = array();
 |
 */
 $config['multilingual']['allowed_languages'] = array(
-														array('english', 'en', 'en.ci-multilingue.labs.mezcalito.viki/'),
-														array('french', 'fr', 'ci-multilingue.labs.mezcalito.viki/fr')
+														array('english', 'en', 'en.ci-multilingue.labs.mezcalito.viki'),
+														array('french', 'fr', 'fr.ci-multilingue.labs.mezcalito.viki')
 													);
 
 /*
