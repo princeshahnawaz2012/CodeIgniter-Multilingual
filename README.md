@@ -19,7 +19,7 @@ To add a language, add a line in the array variable like this following one :
 
 	array('language_name', 'language_tag', 'language_url')
 	
-Where "language_name" is the name (in lower cases) of language defined (it must be named like the folder language corresponding), and "language_tag" the tag (two letter word) of the language, it used by your browser to define language preferences (in your browser, it may be en_US ; just indicate en), and language_url the url where the language will be used (ie : en.example.com or www.example.com/en or www.example.com/index.php/en)
+Where "language_name" is the name (in lower cases) of language defined (it must be named like the folder language corresponding), and "language_tag" the tag (two letter word) of the language, it used by your browser to define language preferences (in your browser, it may be en_US ; just indicate en), and language_url the url where the language will be used (eg : en.example.com or www.example.com/en or www.example.com/index.php/en)
 	
 #### Define protocol used
 
