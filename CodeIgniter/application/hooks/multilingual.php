@@ -77,9 +77,6 @@
 		$this->languages = $config['multilingual']['allowed_languages'];
 		$this->current_language = $this->languages[0];
 		$this->protocols = $config['multilingual']['protocols'];
-		
-		// Find the correct language.
-		$this->used_protocol = $this->_get_language();
 	}
  	
 	// ------------------------------------------------------------------------
@@ -100,12 +97,12 @@
 		{
 			if($protocol === 'BROWSER')
 			{
-				// Find the language tag of the browser Accept-Language variable.
+				// Find the language tag of the browser Accept-Language variable
 				$browser_language = substr(strtolower($_SERVER["HTTP_ACCEPT_LANGUAGE"]), 0, 2);
 
 				foreach($this->languages as $language)
 				{
-					// If the language tags correspond each other, defined the new current language.
+					// If the language tags correspond each other, defined the new current language
 					if($language[1] === $browser_language)
 					{
 						$this->current_language = $language;
@@ -116,12 +113,12 @@
 			elseif($protocol === 'URI')
 			{
 				// Get the current uri
-				$current_uri = $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+				$current_uri = 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
 				
 				foreach($this->languages as $language)
 				{
 					// Check if one of uris defined in the config file matches with the current_uri, to find the current language
-					if( preg_match('#'.trim(str_replace('http://', '', $language[2]), '/').'#', $current_uri) )
+					if( preg_match('#'.trim('http://'.str_replace('http://', '', $language[2]), '/').'#', $current_uri) )
 					{
 						$this->current_language = $language;
 						return $protocol;
@@ -131,6 +128,32 @@
 		}
 		
 		return 'no_protocol';
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	/**
+	 * Find Pre Uri
+	 *
+	 * If there is pre_uri informations to define language
+	 * (like "en" in http://www.example.com/en), find it.
+	 *
+	 * @access	public
+	 * @param	none
+	 * @return	void
+	 */
+	private function _find_pre_uri()
+	{
+		$result = array();
+		
+		foreach($this->languages as $language)
+		{
+			// If there is a pre uri, get it.
+			$ext = explode('/', str_replace('http://', '', trim($language[2], '/')), 2);
+			$result[$language[0]] = ( isset($ext[1]) ) ? trim( preg_replace('#((.+)\.php)?(.+)#', '$3', $ext[1]), '/' ) : '';
+		}
+		
+		return $result;
 	}
 	
 	// ------------------------------------------------------------------------
@@ -147,39 +170,31 @@
 	 */
 	public function set_route()
 	{
-		// Defined global variable for the routes.
-		global $_ROUTE;
-		global $_PRE_ROUTE;
+		// Defined global variable for the routes
+		global $_ROUTE, $_PRE_ROUTE, $_CURRENT_LANGUAGE;
 		
-		//If used protocol is URI and if language selection is made by a uri segment, put this segment in route configuration
-		$uri_pre = '';
-		if( $this->used_protocol === 'URI' )
-		{
-			$ext = str_replace('http://', '', $this->current_language[2]);
-			$ext = explode('/', $ext, 2);
-			if( isset($ext[1]) )
-			{
-				// Prepare prefix of URI for selected language using uri defined in config file
-				$uri_pre = trim( preg_replace('#((.+)\.php)?(.+)#', '$3', $ext[1]), '/' );
-				$_PRE_ROUTE = $uri_pre;
-				$uri_pre = $uri_pre . '/';
-			}
-		}
+		// Find the correct current language
+		$this->used_protocol = $this->_get_language();
+		$_CURRENT_LANGUAGE = $this->current_language[0];
+		
+		// Get pre uri informations
+		$_PRE_ROUTE = $this->_find_pre_uri();
 		
 		// Load route language file.
 		require APPPATH.'language/'.$this->current_language[0].'/route_lang.php';
 		
-		// Parse the $route variable, like in the route.php config file, with routes of language file.
+		// Parse the $route variable, like in the route.php config file, with routes of language file
 		$route = array();
 		foreach($lang['route'] as $key => $array)
 		{
 			foreach($array as $uri => $ruri)
 			{
-				$route[trim($uri_pre.$uri, '/')] = $ruri;
+				// Build route array
+				$route[trim($_PRE_ROUTE[$this->current_language[0]].'/'.$uri, '/')] = $ruri;
 			}
 		}
 		
-		// Place the $route variable in the global variable defined before.
+		// Place the $route variable in the global variable defined before
 		$_ROUTE = $route;
 	}
 	
@@ -197,9 +212,13 @@
 	 */
 	public function set_language()
 	{
+		// Defined global variable for the routes
+		global $_CURRENT_LANGUAGE;
+		
+		// Get config instance
 		$this->config =& load_class('Config');
 		
-		// Change the language of the configuration by the current language found with the hook.
-		$this->config->set_item('language', $this->current_language[0]);
+		// Change the language of the configuration by the current language found with the hook
+		$this->config->set_item('language', $_CURRENT_LANGUAGE);
 	}
 }

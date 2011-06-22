@@ -56,30 +56,53 @@ function _t($str, $params, $segment = '%s')
  * @param	string
  * @return	string
  */
-function _path($str, $params = FALSE)
+function _path($str, $params = FALSE, $idiom = FALSE)
 {
-	$res = $str;
-	
 	global $_PRE_ROUTE;
+	
+	// Put string param in the result variable to return it if there is no rule to apply
+	$res = $str;
 	
 	$CI =& get_instance();
 	$CI->lang->load('route');
 	
 	$route = $CI->lang->line('route');
+	$pre_uri = $_PRE_ROUTE[$CI->config->item('language')];
 	
-	if(isset($route[$str]))
+	// If $idiom (language name) is defined, it means that we want an another language that the default one
+	if($idiom !== FALSE)
 	{
-		foreach($route[$str] as $uri => $ruri)
+		if($idiom !== $CI->config->item('language'))
 		{
-			$res = trim( $_PRE_ROUTE.'/'.$uri, '/' );
+			if( file_exists(APPPATH.'language/'.$idiom.'/route_lang.php') )
+			{
+				require APPPATH.'language/'.$idiom.'/route_lang.php';
+				
+				$route = $lang['route'];
+				$pre_uri = $_PRE_ROUTE[$idiom];
+			}
 		}
-		
-		$res = str_replace('(', '', str_replace(')', '', $res));
-		$res = str_replace(':any', '%s', str_replace(':num', '%s', $res));
 	}
 	
+	// If a route line corresponds, use it.
+	if(isset($route[$str]))
+	{
+		// Find the correct line in the file
+		foreach($route[$str] as $uri => $ruri)
+		{
+			$res = trim( $pre_uri.'/'.$uri, '/' );
+		}
+		
+	}
+	
+	// If there are params we put it in the sting url
 	if($params !== FALSE)
 	{
+		// Prepare it to be able to use vsprintf
+		$res = str_replace('(', '', str_replace(')', '', $res));
+		$res = str_replace(':any', '%s', str_replace(':num', '%s', $res));
+		
+		// Replacement
 		$res = vsprintf($res, $params);
 	}
 	
