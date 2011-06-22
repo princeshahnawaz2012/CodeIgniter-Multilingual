@@ -52,11 +52,17 @@ This will render : "Mezcalito is a web agency, located in Grenoble, France".
 
 #### Path helper
 
-There is an another method : "_path($str, $params = FALSE)". Thanks to it you can make urls more easily, using keywords of route_lang.php language file. Here's an example (using the route defined above) :
+There is an another method : "_path($str, $params = FALSE, $idiom = FALSE)". Thanks to it you can make urls more easily, using keywords of route_lang.php language file. Here's an example (using the route defined above) :
 
 	echo _path('member', array('yannis'));
 
 This will render : "member/yannis" (reference to the rule mentioned above).
+
+You can use an another language that the default one, precising it in the third parameter. For example :
+
+    echo _path('member', array('yannis'), 'french');
+
+This will render : "membre/yannis" (if it is the traduction of the route, in "language/french/route_lang.php").
 
 --------------------------------------------------
 
