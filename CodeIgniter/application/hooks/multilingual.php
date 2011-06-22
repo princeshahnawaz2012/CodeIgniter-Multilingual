@@ -113,12 +113,12 @@
 			elseif($protocol === 'URI')
 			{
 				// Get the current uri
-				$current_uri = 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+				$current_uri = 'http://'.trim($_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'], '/').'/';
 				
 				foreach($this->languages as $language)
 				{
 					// Check if one of uris defined in the config file matches with the current_uri, to find the current language
-					if( preg_match('#'.trim('http://'.str_replace('http://', '', $language[2]), '/').'#', $current_uri) )
+					if( preg_match('#http://'.trim(str_replace('http://', '', $language[2]), '/').'/#', $current_uri) )
 					{
 						$this->current_language = $language;
 						return $protocol;
