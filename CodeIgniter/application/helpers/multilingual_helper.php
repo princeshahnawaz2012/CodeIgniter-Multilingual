@@ -76,9 +76,10 @@ function _path($str, $params = FALSE, $idiom = FALSE)
 		{
 			if( file_exists(APPPATH.'language/'.$idiom.'/route_lang.php') )
 			{
-				require APPPATH.'language/'.$idiom.'/route_lang.php';
+				require_once APPPATH.'language/'.$idiom.'/route_lang.php';
+				if( isset($lang['route'])) { $CI->config->set_item('language_route_'.$idiom, $lang['route']); }
 				
-				$route = $lang['route'];
+				$route = $CI->config->item('language_route_'.$idiom);
 				$pre_uri = $_PRE_ROUTE[$idiom];
 			}
 		}
